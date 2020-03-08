@@ -16,3 +16,6 @@ ndk-build
 
 ## References ✒️
 * [ARM Instruction set](https://iitd-plos.github.io/col718/ref/arm-instructionset.pdf)
+
+## Credits
+- Delshire
