@@ -11,5 +11,8 @@
 typedef char byte;
 typedef void * p_void;
 
+#define _extern \
+    extern "C" __attribute__((__visibility__("default")))
+
 
 #endif

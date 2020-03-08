@@ -11,7 +11,6 @@
  * @param address of your custom function
  * @param pointer to the original function
  */
-
 void DHook(void * origin, void * detour, void ** trampoline);
 
 
