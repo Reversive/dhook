@@ -11,7 +11,5 @@
 typedef char byte;
 typedef void * p_void;
 
-void uint_to_byte_array(uint32_t address, byte * b_array);
-void place_bytes(void * source, void * dest, int len);
 
 #endif

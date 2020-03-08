@@ -9,7 +9,6 @@ LOCAL_CFLAGS += -fno-rtti -fno-exceptions -Wconstant-logical-operand
 LOCAL_C_INCLUDES += $(MAIN_LOCAL_PATH)
 
 LOCAL_SRC_FILES := dhook.cpp \
-			dutils.cpp \
 			
 		  
 
