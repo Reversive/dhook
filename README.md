@@ -18,6 +18,7 @@ check usage over at /jni/entry_point.cpp
 ```
 ## TO-DO 📄
 * Support Thumb2 and ARM64
+* Un-Hook Functionality
 
 ## References ✒️
 * [ARM Instruction set](https://iitd-plos.github.io/col718/ref/arm-instructionset.pdf)
