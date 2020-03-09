@@ -32,7 +32,7 @@ void placeBytes(void * source, void *  dest, int len) {
 }
 
 p_void DHookTrampolineARM(p_void origin, p_void target) {
-    DContainer * dhc = (DContainer *)malloc(sizeof(DContainer)); 
+    DContainer * dhc = (DContainer *)malloc(sizeof(DContainer)); // Need to write unhook functio to free this
     LOGD("DDBG", "::Ready to Hook: %p, Detour currently at: %p", origin, target);
 
     copyBranchBytes(dhc->branchDetourBytes, target);
