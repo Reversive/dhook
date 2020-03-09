@@ -19,7 +19,7 @@ ndk-build
 check usage over at /jni/entry_point.cpp
 ```
 
-## TO-DO
+## TO-DO 📄
 * Support Thumb2 and ARM64
 
 
