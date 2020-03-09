@@ -11,10 +11,11 @@
     Check https://iitd-plos.github.io/col718/ref/arm-instructionset.pdf page 4-26
 
 */
-byte ldr_pc_pc_4[4] = { 0x04, 0xF0, 0x1F, 0xE5 }; 
+byte ldr_pc_pc_4_thumb2[4] = { 0x5F, 0xF8, 0x04, 0xF0 }; 
+byte ldr_pc_pc_4_arm[4] = { 0x04, 0xF0, 0x1F, 0xE5 }; 
 void copyBranchBytes(byte * bytes, p_void target) {
     for(int i = 0; i < 4; i++) {
-        bytes[i] = ldr_pc_pc_4[i]; 
+        bytes[i] = ldr_pc_pc_4_arm[i]; 
         bytes[i + 4] = ((uint32_t)target >> i * 8) & 0xFF; 
     }
 }
@@ -59,10 +60,14 @@ p_void DHookTrampolineARM(p_void origin, p_void target) {
     return (p_void) dhc->restorationBytes;
 }
 
+p_void DHookTrampolineThumb2(p_void origin, p_void target) { return NULL; }
+
+
 void DHook(p_void origin, p_void detour, p_void * trampoline) { 
     if ((reinterpret_cast<uintptr_t>(origin) & 0x1) == 0) {
         *trampoline = DHookTrampolineARM(origin, detour);
     }  else {
+        *trampoline = DHookTrampolineThumb2(origin, detour);
         LOGE("DERR", "::Lib supports ARM32-only for now");
     }
     
