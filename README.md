@@ -13,6 +13,10 @@ cd jni
 ndk-build
 ```
 
+## Usage ⌨️
+```
+Check main.cpp
+```
 
 ## References ✒️
 * [ARM Instruction set](https://iitd-plos.github.io/col718/ref/arm-instructionset.pdf)
