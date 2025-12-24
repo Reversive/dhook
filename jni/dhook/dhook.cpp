@@ -16,19 +16,19 @@ byte ldr_pc_pc_4_arm[4] = { 0x04, 0xF0, 0x1F, 0xE5 };
 void copyBranchBytes(byte * bytes, p_void target) {
     for(int i = 0; i < 4; i++) {
         bytes[i] = ldr_pc_pc_4_arm[i]; 
-        bytes[i + 4] = ((uint32_t)target >> i * 8) & 0xFF; 
+        bytes[i + 4] = ((uintptr_t)target >> i * 8) & 0xFF; 
     }
 }
 
 // Set @protection flags on @target starting page, @return mprotect response parsed as MEMPROTECT_STATUS
 MEMPROTECT_STATUS setPageProtection(void * target, int protection) {
-    p_void page_start = (p_void)((uint32_t)target - (uint32_t)target % PAGE_SIZE);
+    p_void page_start = (p_void)((uintptr_t)target - (uintptr_t)target % PAGE_SIZE);
     return (MEMPROTECT_STATUS) mprotect((p_void)page_start, PAGE_SIZE, protection);
 }
 
 // Set @len bytes on @dest from @source
 void placeBytes(void * source, void *  dest, int len) {
-    for(int i = 0; i < len; i++) *(byte *)((uint32_t)dest + i) = *(byte *)((uint32_t)source + i);
+    for(int i = 0; i < len; i++) *(byte *)((uintptr_t)dest + i) = *(byte *)((uintptr_t)source + i);
 }
 
 p_void DHookTrampolineARM(p_void origin, p_void target) {
@@ -42,17 +42,20 @@ p_void DHookTrampolineARM(p_void origin, p_void target) {
     MEMPROTECT_STATUS status = setPageProtection(origin, PROT_READ | PROT_WRITE | PROT_EXEC);
     if(status == MEMPROTECT_FAILED) {
         LOGE("DERR", "::mprotect failed on step 1");
+        free(dhc);
         return NULL;
     }
 
     placeBytes(dhc->branchDetourBytes, origin, 8); // Place the jump to our detour function on origin
     LOGD("DDBG", "::Placed Detour");
 
-    p_void returnAddress = (p_void)((uint32_t)origin + 0x8); // This is were we want to return after we finish with our detour code 
+    p_void returnAddress = (p_void)((uintptr_t)origin + 0x8); // This is were we want to return after we finish with our detour code 
     copyBranchBytes(dhc->restorationBytes + 8, returnAddress); // dhc->restorationBytes contain the original function bytes in the first 8 bytes, the remaining 8 bytes are used to jump back to origin+0x8
     status = setPageProtection((void *)dhc->restorationBytes, PROT_READ | PROT_WRITE | PROT_EXEC);
     if(status == MEMPROTECT_FAILED) {
         LOGE("DERR", "::mprotect failed on step 2");
+        placeBytes(dhc->restorationBytes, origin, 8); // Restore original bytes
+        free(dhc);
         return NULL;
     }
 
