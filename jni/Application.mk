@@ -1,8 +1,7 @@
 APP_ABI          := armeabi-v7a
 APP_OPTIM        := release
 APP_PLATFORM     := android-19
-APP_STL          := system
-APP_STL          := gnustl_static
+APP_STL          := c++_static
 APP_THIN_ARCHIVE := true
 APP_PIE:= true
 
