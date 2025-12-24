@@ -2,6 +2,7 @@
 #define DUTILS_H_
 
 #include <stdint.h>
+#include <stddef.h>
 #include "dlogger.h"
 #include "dcontainer.h"
 #include <sys/mman.h>

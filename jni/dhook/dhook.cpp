@@ -32,9 +32,10 @@ void placeBytes(void * source, void *  dest, int len) {
 }
 
 p_void DHookTrampolineARM(p_void origin, p_void target) {
-    DContainer * dhc = (DContainer *)malloc(sizeof(DContainer)); // Need to write unhook functio to free this
+    DContainer * dhc = (DContainer *)malloc(sizeof(DContainer));
     LOGD("DDBG", "::Ready to Hook: %p, Detour currently at: %p", origin, target);
 
+    dhc->origin = origin;
     copyBranchBytes(dhc->branchDetourBytes, target);
     placeBytes(origin, dhc->restorationBytes, 8); // Save first 8 bytes (2 instructions) from the original function to restore later in the trampoline
     LOGD("DDBG", "::Saved Original Bytes");
@@ -66,12 +67,27 @@ p_void DHookTrampolineARM(p_void origin, p_void target) {
 p_void DHookTrampolineThumb2(p_void origin, p_void target) { return NULL; }
 
 
-void DHook(p_void origin, p_void detour, p_void * trampoline) { 
+void DHook(p_void origin, p_void detour, p_void * trampoline) {
     if ((reinterpret_cast<uintptr_t>(origin) & 0x1) == 0) {
         *trampoline = DHookTrampolineARM(origin, detour);
     }  else {
         *trampoline = DHookTrampolineThumb2(origin, detour);
         LOGE("DERR", "::Lib supports ARM32-only for now");
     }
-    
+}
+
+void DHookUnhook(p_void trampoline) {
+    if (trampoline == NULL) return;
+
+    DContainer * dhc = (DContainer *)((uintptr_t)trampoline - offsetof(DContainer, restorationBytes));
+
+    MEMPROTECT_STATUS status = setPageProtection(dhc->origin, PROT_READ | PROT_WRITE | PROT_EXEC);
+    if(status == MEMPROTECT_FAILED) {
+        LOGE("DERR", "::mprotect failed during unhook");
+        return;
+    }
+
+    placeBytes(dhc->restorationBytes, dhc->origin, 8);
+    LOGD("DDBG", "::Unhooked %p", dhc->origin);
+    free(dhc);
 }

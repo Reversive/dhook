@@ -13,5 +13,12 @@
  */
 void DHook(void * origin, void * detour, void ** trampoline);
 
+/**
+ * Remove a previously installed hook
+ *
+ * @param trampoline returned by DHook
+ */
+void DHookUnhook(void * trampoline);
+
 
 #endif  // DHOOK_H_
