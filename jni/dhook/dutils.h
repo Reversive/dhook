@@ -8,7 +8,7 @@
 #include <stdlib.h> 
 #define MASK 0xFF
 
-typedef char byte;
+typedef unsigned char byte;
 typedef void * p_void;
 
 #define _extern \
